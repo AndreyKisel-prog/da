@@ -16,15 +16,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $a = 'welcome';
-    return view($a);
+    return view('welcome2');
 });
 
 
-Route::prefix('blog')->group(function () {
-    Route::resource('posts', PostController::class)->names('blog.posts');
-});
+// Route::prefix('blog')->group(function () {
+//     Route::resource('posts', PostController::class)->names('blog.posts');
+// });
 
 
-Route::resource('rest', RestTestController::class)->names('restTest');
 
