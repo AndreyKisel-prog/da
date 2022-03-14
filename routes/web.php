@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Blog\Admin\CategoryController;
 use App\Http\Controllers\Blog\PostController;
 use App\Http\Controllers\RestTestController;
 use Illuminate\Support\Facades\Route;
@@ -16,13 +17,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome2');
+    return view('welcome');
 });
 
-
-// Route::prefix('blog')->group(function () {
-//     Route::resource('posts', PostController::class)->names('blog.posts');
-// });
+Auth::routes();
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
+Route::prefix('blog')->group(function () {
+    Route::resource('posts', PostController::class)->names('blog.posts');
+});
+
+//admin panel
+Route::prefix('admin/blog')->group(function (){
+    $methods = ['index', 'create', 'store', 'edit', 'update'];
+    Route::resource('categories', CategoryController::class)->only($methods)->names('blog.admin.categories');
+});
 
