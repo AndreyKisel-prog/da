@@ -18,11 +18,12 @@
                                 <input
                                     name="title"
                                     id="title"
-                                    value="{{$item->title}}"
                                     type="text"
                                     required
                                     minlength="3"
-                                    class="form-control">
+                                    class="form-control"
+                                    value="{{old('title', $item->title)}}"
+                                >
                             </div>
 
                             <div class="form-group">
@@ -30,7 +31,7 @@
                                 <input
                                     name="slug"
                                     id="slug"
-                                    value="{{$item->slug}}"
+                                    value="{{old('slug', $item->slug)}}"
                                     type="text"
                                     class="form-control">
                             </div>
@@ -43,7 +44,8 @@
                                         class="form-control">
                                     @foreach($categoryList as $categoryOption)
                                         <option value="{{$categoryOption->id}}"
-                                                @if($categoryOption->id == $item->parent_id) selected @endif
+                                                @if(($categoryOption->id == $item->parent_id))
+                                                selected @endif
                                         >
                                             {{$categoryOption->id}}.{{$categoryOption->title}}
                                         </option>

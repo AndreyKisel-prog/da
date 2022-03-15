@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
             <div class="clo-md-12">
                 <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
-                    <a class="btn btn-primary" href="{{route('blog.admin.categories.create')}}}">Add</a>
+                    <a class="btn btn-primary" href="{{route('blog.admin.categories.create')}}">Add</a>
                 </nav>
                 <div class="card">
                     <div class="card-body">

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Blog\Admin;
 
+use App\Http\Requests\BlogCategoryCreateRequest;
 use App\Http\Requests\BlogCategoryUpdateRequest;
 use App\Models\BlogCategory;
-use Illuminate\Http\Request;
+use App\Repositories\BlogCategoryRepository;
+use Illuminate\Support\Str;
 
 class CategoryController extends BaseController
 {
+    private $save;
+
     /**
      * Display a listing of the resource.
      *
@@ -26,18 +30,35 @@ class CategoryController extends BaseController
      */
     public function create()
     {
-        //
+        $item = new BlogCategory();
+        $categoryList = BlogCategory::all();
+        return view('blog.admin.categories.edit', compact('item', 'categoryList'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Foundation\Http\FormRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BlogCategoryCreateRequest $request)
     {
-        //
+        $data = $request->input();
+
+        if (empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['title']);
+        }
+
+        $item = (new BlogCategory())->create($data);
+
+        if ($item) {
+            return redirect()->route('blog.admin.categories.edit', [$item->id])
+                ->with(['success' => 'new category has been added']);
+        } else {
+            return back()->withErrors(['msg' => 'saving new category error'])
+                ->withInput();
+        }
+
     }
 
     /**
@@ -46,10 +67,16 @@ class CategoryController extends BaseController
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($id, BlogCategoryRepository $categoryRepository)
     {
-        $item = BlogCategory::findOrFail($id);
-        $categoryList = BlogCategory::all();
+//        $item = BlogCategory::findOrFail($id);
+//        $categoryList = BlogCategory::all();
+
+        $item = $categoryRepository->getEdit($id);
+        if (empty($item)) {
+            abort(404);
+        }
+        $categoryList = $categoryRepository->getForComboBox();
 
         return view('blog.admin.categories.edit', compact('item', 'categoryList'));
     }
@@ -57,7 +84,7 @@ class CategoryController extends BaseController
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param \Illuminate\Foundation\Http\FormRequest $request
      * @param int $id
      * @return \Illuminate\Http\Response
      */
@@ -70,7 +97,7 @@ class CategoryController extends BaseController
         };
 
         $data = $request->all();
-        $result = $item->fill($data)->save();
+        $result = $item->update($data);
 
         if ($result) {
             return redirect()->route('blog.admin.categories.edit', $item->id)->with(['success' => 'Saved successfully']);
