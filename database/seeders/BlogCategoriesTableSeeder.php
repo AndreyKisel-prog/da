@@ -23,7 +23,7 @@ class BlogCategoriesTableSeeder extends Seeder
             'slug' => Str::slug($cName),
             'parent_id' => 0,
         ];
-        for ($i = 0; $i <= 10; $i++) {
+        for ($i = 2; $i <= 11; $i++) {
             $cName = "Category #" . $i;
             $parentId = ($i > 4) ? rand(1, 4) : 1;
             $categories[] = [
