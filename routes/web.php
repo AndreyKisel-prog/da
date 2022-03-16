@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Blog\Admin\CategoryController;
-use App\Http\Controllers\Blog\PostController;
+use App\Http\Controllers\Blog\Admin\PostController;
 use App\Http\Controllers\RestTestController;
 use Illuminate\Support\Facades\Route;
 
@@ -24,13 +24,21 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 
-Route::prefix('blog')->group(function () {
-    Route::resource('posts', PostController::class)->names('blog.posts');
-});
+//Route::prefix('blog')->group(function () {
+//    Route::resource('posts', PostController::class)->names('blog.posts');
+//});
 
 //admin panel
-Route::prefix('admin/blog')->group(function (){
+Route::prefix('admin/blog')->group(function () {
+
     $methods = ['index', 'create', 'store', 'edit', 'update'];
-    Route::resource('categories', CategoryController::class)->only($methods)->names('blog.admin.categories');
+    Route::resource('categories', CategoryController::class)
+        ->only($methods)
+        ->names('blog.admin.categories');
+
+    Route::resource('posts', PostController::class)
+        ->except(['show'])
+        ->names('blog.admin.posts');
+
 });
 
