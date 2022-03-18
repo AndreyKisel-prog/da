@@ -63,9 +63,9 @@
 
                         <div class="tab-pane fade" id="optional" role="tabpanel">
                             <div class="form-group">
-                                <label for="parent_id">Parent</label>
-                                <select name="parent_id"
-                                        id="parent_id"
+                                <label for="category_id">category</label>
+                                <select name="category_id"
+                                        id="category_id"
                                         required
                                         class="form-control">
                                     @foreach($categoryList as $categoryOption)
@@ -104,7 +104,7 @@
                                 <input class="form-check-input"
                                        id="is_published"
                                        type="checkbox"
-                                       value="{{$item->is_published}}"
+                                       value="1"
                                        @if($item->is_published)
                                        checked="checked"
                                        @endif

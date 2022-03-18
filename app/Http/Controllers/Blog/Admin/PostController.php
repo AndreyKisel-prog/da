@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Blog\Admin;
 
+use App\Http\Requests\BlogPostUpdateRequest;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
 use App\Repositories\BlogCategoryRepository;
 use App\Repositories\BlogPostRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 
 /**
@@ -104,22 +107,32 @@ class PostController extends BaseController
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BlogPostUpdateRequest $request, $id)
     {
-        $item = BlogPost::find($id);
+        $item = $this->blogPostRepository->getEdit($id);
         if (empty($item)) {
             return back()
                 ->withErrors(['msg' => "Post with id {$id} was not found"])
                 ->withInput();
         }
         $data = $request->all();
+
+        if (empty($data['slug'])) {
+            $data['slug'] = Str::slug($data['title']);
+        }
+
+        if (empty($data['is_published']) && $data['is_published']) {
+            $data['is_published'] = Carbon::now();
+        }
+
         $result = $item->update($data);
         if ($result) {
-            return redirect()->route('blog.admin.posts.edit', $item->id)
-                ->with(['success' => 'Post with id {$id} has edited successfully']);
+            return redirect()
+                ->route('blog.admin.posts.edit', $item->id)
+                ->with(['success' => "Post with id {$id} has edited successfully"]);
         } else {
             return back()
-                ->withErrors(['msg' => 'Post with id {$id} has not found'])
+                ->withErrors(['msg' => "Post with id {$id} has not found"])
                 ->withInput();
         }
     }
