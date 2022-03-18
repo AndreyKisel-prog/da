@@ -97,7 +97,7 @@ class CategoryController extends BaseController
      *
      * @param \Illuminate\Foundation\Http\FormRequest $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(BlogCategoryUpdateRequest $request, $id)
     {
@@ -111,7 +111,8 @@ class CategoryController extends BaseController
         $result = $item->update($data);
 
         if ($result) {
-            return redirect()->route('blog.admin.categories.edit', $item->id)->with(['success' => 'Saved successfully']);
+            return redirect()->route('blog.admin.categories.edit', $item->id)
+                ->with(['success' => 'Saved successfully']);
         } else {
             return back()->withErrors(['msg' => 'Error saving'])->withInput();
         }

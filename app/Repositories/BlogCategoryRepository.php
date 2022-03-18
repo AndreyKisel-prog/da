@@ -40,7 +40,6 @@ class BlogCategoryRepository extends CoreRepository
             ->toBase()
             ->get();
 
-//        dd($result->first());
         return $result;
     }
 

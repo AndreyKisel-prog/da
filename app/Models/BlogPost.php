@@ -11,6 +11,21 @@ class BlogPost extends Model
     use HasFactory;
     use SoftDeletes;
 
+
+    /**
+     * @var array
+     */
+    protected $fillable = [
+        'title',
+        'content_raw',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'excerpt',
+        'slug',
+
+    ];
+
     /**
      *user
      * @return Illuminate\Database\Eloquent\Relations\BelongsTo

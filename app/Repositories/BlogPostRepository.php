@@ -44,8 +44,32 @@ class BlogPostRepository extends CoreRepository
                 'category:id,title',
             ])
             ->paginate($perPage);
-//     dd($result);
+        return $result;
+    }
+
+    /**
+     * @param $id
+     * @return Model
+     */
+    public function getEdit($id)
+    {
+        return $this->startConditions()->find($id);
+    }
+
+    public function getForComboBox()
+    {
+        $columns = implode(', ', [
+            'id',
+            'CONCAT(id,' . 'title) AS id_title',
+        ]);
+
+        $result = $this
+            ->startConditions()
+            ->selectRaw($columns)
+            ->toBase()
+            ->get();
 
         return $result;
     }
+
 }
