@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Blog\Admin;
 
+use App\Http\Requests\BlogPostCreateRequest;
 use App\Http\Requests\BlogPostUpdateRequest;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
@@ -53,22 +54,34 @@ class PostController extends BaseController
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function create()
+    public function create(): \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
     {
-        dd(__METHOD__);
+        $item = new BlogPost();
+        $categoryList = $this->blogCategoryRepository->getForComboBox();
+        return view('blog.admin.posts.edit', compact('item', 'categoryList'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param BlogPostCreateRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(BlogPostCreateRequest $request)
     {
-        dd(__METHOD__);
+        $data = $request->input();
+        $item = (new BlogPost())->create($data);
+        if ($item) {
+            return redirect()
+                ->route('blog.admin.posts.edit', [$item->id])
+                ->with(['success' => "new post has been added"]);
+        } else {
+            return back()
+                ->withErrors(['msg' => "new post has not been added"])
+                ->withInput();
+        }
     }
 
     /**
@@ -105,27 +118,22 @@ class PostController extends BaseController
      *
      * @param \Illuminate\Http\Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(BlogPostUpdateRequest $request, $id)
     {
         $item = $this->blogPostRepository->getEdit($id);
+
         if (empty($item)) {
             return back()
                 ->withErrors(['msg' => "Post with id {$id} was not found"])
                 ->withInput();
         }
+
         $data = $request->all();
 
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }
-
-        if (empty($data['is_published']) && $data['is_published']) {
-            $data['is_published'] = Carbon::now();
-        }
-
         $result = $item->update($data);
+
         if ($result) {
             return redirect()
                 ->route('blog.admin.posts.edit', $item->id)

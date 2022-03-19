@@ -70,7 +70,7 @@
                                         class="form-control">
                                     @foreach($categoryList as $categoryOption)
                                         <option value="{{$categoryOption->id}}"
-                                                @if(($categoryOption->id == $item->category->id))
+                                                @if(($categoryOption->id == $item->category_id))
                                                 selected @endif
                                         >
                                             {{$categoryOption->id_title}}
